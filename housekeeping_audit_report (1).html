@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Housekeeping Audit Report</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 8.5in;
+            margin: 0 auto;
+            padding: 20px;
+            background: white;
+        }
+        
+        .header {
+            text-align: center;
+            border-bottom: 3px solid #2c5aa0;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            color: #2c5aa0;
+            margin: 0;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        
+        .header p {
+            margin: 5px 0;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .section {
+            margin-bottom: 25px;
+            break-inside: avoid;
+        }
+        
+        .section-title {
+            background: #2c5aa0;
+            color: white;
+            padding: 10px 15px;
+            margin: 0;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 5px 5px 0 0;
+        }
+        
+        .section-content {
+            border: 1px solid #ddd;
+            border-top: none;
+            padding: 15px;
+            border-radius: 0 0 5px 5px;
+            background: #fafafa;
+        }
+        
+        .room-header {
+            background: #f0f4f8;
+            padding: 10px;
+            border-left: 4px solid #2c5aa0;
+            margin-bottom: 15px;
+        }
+        
+        .room-number {
+            font-size: 20px;
+            font-weight: bold;
+            color: #2c5aa0;
+            margin: 0;
+        }
+        
+        .inspector {
+            color: #666;
+            font-size: 14px;
+            margin: 0;
+        }
+        
+        .status {
+            margin-top: 5px;
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-weight: bold;
+            display: inline-block;
+        }
+        
+        .status.warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        
+        .findings {
+            margin: 15px 0;
+        }
+        
+        .finding-category {
+            margin-bottom: 15px;
+        }
+        
+        .category-title {
+            font-weight: bold;
+            color: #2c5aa0;
+            font-size: 16px;
+            margin-bottom: 8px;
+            padding-bottom: 3px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .finding-item {
+            margin: 8px 0;
+            padding: 8px 12px;
+            border-radius: 4px;
+            display: flex;
+            align-items: flex-start;
+        }
+        
+        .finding-item.completed {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+        }
+        
+        .finding-item.needs-action {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+        }
+        
+        .finding-item.warning {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+        }
+        
+        .status-icon {
+            margin-right: 10px;
+            font-weight: bold;
+            font-size: 16px;
+            min-width: 20px;
+        }
+        
+        .completed .status-icon {
+            color: #28a745;
+        }
+        
+        .needs-action .status-icon {
+            color: #dc3545;
+        }
+        
+        .warning .status-icon {
+            color: #ffc107;
+        }
+        
+        .action-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 14px;
+        }
+        
+        .action-table th {
+            background: #2c5aa0;
+            color: white;
+            padding: 10px;
+            text-align: left;
+            font-weight: bold;
+        }
+        
+        .action-table td {
+            padding: 8px 10px;
+            border-bottom: 1px solid #ddd;
+            vertical-align: top;
+        }
+        
+        .action-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        
+        .photo-note {
+            background: #e7f3ff;
+            border: 1px solid #b8daff;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-style: italic;
+        }
+        
+        .urgent {
+            background: #ffebee;
+            border-left: 4px solid #f44336;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 0 4px 4px 0;
+        }
+        
+        .urgent .urgent-title {
+            color: #f44336;
+            font-weight: bold;
+            margin: 0 0 5px 0;
+        }
+        
+        .action-plan {
+            background: #f8f9fa;
+            border: 2px solid #2c5aa0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 30px;
+        }
+        
+        .action-plan h3 {
+            color: #2c5aa0;
+            margin-top: 0;
+            font-size: 20px;
+        }
+        
+        .task-item {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 12px;
+            margin: 10px 0;
+        }
+        
+        .task-number {
+            font-weight: bold;
+            color: #2c5aa0;
+            font-size: 16px;
+        }
+        
+        .task-assigned {
+            color: #666;
+            font-style: italic;
+            margin-top: 5px;
+        }
+        
+        @media print {
+            body {
+                margin: 0;
+                padding: 15px;
+            }
+            .section {
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🏨 Housekeeping Audit Report</h1>
+        <p><strong>Date:</strong> Thursday, June 26, 2025</p>
+        <p><strong>Property:</strong> Holiday Inn Port of Miami</p>
+        <p><strong>Audit Type:</strong> Room Inspections & Common Area Assessment</p>
+    </div>
+
+    <div class="section">
+        <h2 class="section-title">🛏️ Room 509 - Follow-Up Inspection</h2>
+        <div class="section-content">
+            <div class="room-header">
+                <h3 class="room-number">Room 509</h3>
+                <p class="inspector">Follow-Up Inspection</p>
+                <div class="status warning">Some improvement observed, additional work required</div>
+            </div>
+            
+            <div class="findings">
+                <div class="finding-category">
+                    <div class="category-title">🧹 Housekeeping Responsibilities</div>
+                    
+                    <div class="finding-item completed">
+                        <span class="status-icon">✅</span>
+                        <span>One bed skirt replaced</span>
+                    </div>
+                    
+                    <div class="finding-item needs-action">
+                        <span class="status-icon">❌</span>
+                        <span>Second bed skirt remains wrinkled – needs steaming or replacement</span>
+                    </div>
+                    
+                    <div class="finding-item needs-action">
+                        <span class="status-icon">❌</span>
+                        <span>Hangers remain below standard – restocking required</span>
+                    </div>
+                    
+                    <div class="finding-item needs-action">
+                        <span class="status-icon">❌</span>
+                        <span>Vacuuming under bed appears incomplete – dust buildup suggests corners are being skipped</span>
+                    </div>
+                    
+                    <div class="finding-item needs-action">
+                        <span class="status-icon">❌</span>
+                        <span>Base of lamp remains dirty – confirmed as housekeeping responsibility</span>
+                    </div>
+                    
+                    <div class="finding-item warning">
+                        <span class="status-icon">⚠️</span>
+                        <span>Debris noted on closet surfaces – must be wiped down during daily refresh</span>
+                    </div>
+                    
+                    <div class="finding-item completed">
+                        <span class="status-icon">✅</span>
+                        <span>Coffee machine is clean; light dust present – minor wipe-down needed</span>
+                    </div>
+                </div>
+                
+                <div class="finding-category">
+                    <div class="category-title">🔧 Engineering Responsibilities</div>
+                    
+                    <div class="finding-item needs-action">
+                        <span class="status-icon">❌</span>
+                        <span>Room temperature was left at 85°F – must be set to 72°F prior to check-in</span>
+                    </div>
+                    
+                    <div class="urgent">
+                        <p class="urgent-title">🚨 URGENT: Toilet Base Re-caulking Required</p>
+                        <p>Toilet base requires immediate attention. While toilet is secure, current seal is deteriorated and presents sanitation risk, potentially trapping water and leading to mold or odor. Engineering must be assigned ASAP.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="photo-note">
+                📸 <strong>Photo Evidence:</strong> Toilet base deterioration documented, showing open gaps that require immediate re-caulking
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2 class="section-title">🛏️ Room 519 - Preventative Maintenance Review</h2>
+        <div class="section-content">
+            <div class="room-header">
+                <h3 class="room-number">Room 519</h3>
+                <p class="inspector">Inspector: Area</p>
+                <div class="status warning">Multiple detail-level issues require correction</div>
+            </div>
+            
+            <div class="findings">
+                <div class="finding-category">
+                    <div class="category-title">🧹 Housekeeping Observations</div>
+                    
+                    <div class="finding-item completed">
+                        <span class="status-icon">✅</span>
+                        <span>Room released as guest-ready</span>
+                    </div>
+                    
+                    <div class="finding-item needs-action">
+                        <span class="status-icon">❌</span>
+                        <span>Vent deodorizer pucks need replacement</span>
+                    </div>
+                    
+                    <div class="finding-item needs-action">
+                        <span class="status-icon">❌</span>
+                        <span>Bathroom vent is visibly dusty (photo documented)</span>
+                    </div>
+                    
+                    <div class="finding-item needs-action">
+                        <span class="status-icon">❌</span>
+                        <span>Lamp base and floor edges show dust buildup</span>
+                    </div>
+                    
+                    <div class="finding-item needs-action">
+                        <span class="status-icon">❌</span>
+                        <span>Curtains left with blackout panels showing – must reset with sheers in front</span>
+                    </div>
+                    
+                    <div class="finding-item needs-action">
+                        <span class="status-icon">❌</span>
+                        <span>Corners between bathroom door and wall contain debris</span>
+                    </div>
+                    
+                    <div class="finding-item needs-action">
+                        <span class="status-icon">❌</span>
+                        <span>Ice bucket is missing from room inventory</span>
+                    </div>
+                    
+                    <div class="finding-item warning">
+                        <span class="status-icon">⚠️</span>
+                        <span>Showerhead was facing outward toward curtain – repositioned to face wall to prevent water spray</span>
+                    </div>
+                    
+                    <div class="finding-item warning">
+                        <span class="status-icon">⚠️</span>
+                        <span>Shower hardware (faucet, handles) appear dull – needs polishing</span>
+                    </div>
+                </div>
+                
+                <div class="finding-category">
+                    <div class="category-title">🔧 Engineering Observations</div>
+                    
+                    <div class="finding-item warning">
+                        <span class="status-icon">⚠️</span>
+                        <span>Soap holder in bathroom has chipped paint – requires touch-up or repaint</span>
+                    </div>
+                    
+                    <div class="finding-item warning">
+                        <span class="status-icon">⚠️</span>
+                        <span>Bathroom door has visible paint chipping in corner – recommend sanding and repainting</span>
+                    </div>
+                    
+                    <div class="finding-item warning">
+                        <span class="status-icon">⚠️</span>
+                        <span>Door frame trim shows wear on multiple edges – should be touched up</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="photo-note">
+                📸 <strong>Photo Evidence:</strong> Bathroom vent dust buildup, showerhead positioning, fixture condition documented
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2 class="section-title">🏢 Common Area Observations</h2>
+        <div class="section-content">
+            <div class="finding-category">
+                <div class="category-title">🚨 Recurring Issues - Require Immediate Attention</div>
+                
+                <div class="urgent">
+                    <p class="urgent-title">Stairwell Cleanliness</p>
+                    <p>Debris still present in staircase - <strong>same debris from last week has not been removed</strong>. Photo evidence confirms paper/tissue and dirt on stair treads and corners. No visible cleaning attempt since last observation.</p>
+                </div>
+                
+                <div class="finding-item needs-action">
+                    <span class="status-icon">❌</span>
+                    <span>Fire extinguisher box tops show dust accumulation throughout hallways</span>
+                </div>
+                
+                <div class="finding-item needs-action">
+                    <span class="status-icon">❌</span>
+                    <span>Ice machine areas have debris buildup around floor edges and corners</span>
+                </div>
+                
+                <div class="finding-item warning">
+                    <span class="status-icon">⚠️</span>
+                    <span>Miscellaneous clutter items observed in hallways need removal</span>
+                </div>
+                
+                <div class="finding-item needs-action">
+                    <span class="status-icon">❌</span>
+                    <span>Main hallway carpets appear heavily soiled - require shampooing</span>
+                </div>
+                
+                <div class="finding-item needs-action">
+                    <span class="status-icon">❌</span>
+                    <span>Gum stains/residue on carpets need special removal treatment</span>
+                </div>
+                
+                <div class="finding-item needs-action">
+                    <span class="status-icon">❌</span>
+                    <span>8th floor: Paint splatters on carpet heading toward 820s rooms</span>
+                </div>
+            </div>
+            
+            <div class="finding-category">
+                <div class="category-title">🚿 Pool Area</div>
+                
+                <div class="urgent">
+                    <p class="urgent-title">Unauthorized Bathroom Access</p>
+                    <p>Restricted bathroom near pool was accessed and used, resulting in clogged toilet. Door needs immediate locking mechanism to prevent future unauthorized access.</p>
+                </div>
+            </div>
+            
+            <div class="photo-note">
+                📸 <strong>Photo Evidence:</strong> Stairwell debris, ice machine area buildup, bathroom vent conditions documented
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2 class="section-title">📋 Preventative Maintenance Standards</h2>
+        <div class="section-content">
+            <table class="action-table">
+                <thead>
+                    <tr>
+                        <th>Task</th>
+                        <th>Department</th>
+                        <th>Frequency</th>
+                        <th>Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Replace vent deodorizer pucks</td>
+                        <td>Housekeeping/Engineering</td>
+                        <td>Every PM cycle</td>
+                        <td>Maintain scent consistency and air quality</td>
+                    </tr>
+                    <tr>
+                        <td>Clean air vents (bathroom & room)</td>
+                        <td>Housekeeping</td>
+                        <td>PM + room turnover</td>
+                        <td>Dust impacts perceived cleanliness</td>
+                    </tr>
+                    <tr>
+                        <td>Clean lamp bases and surrounding floors</td>
+                        <td>Housekeeping</td>
+                        <td>Every service</td>
+                        <td>Commonly overlooked detail area</td>
+                    </tr>
+                    <tr>
+                        <td>Position showerheads toward wall</td>
+                        <td>Housekeeping</td>
+                        <td>Every departure</td>
+                        <td>Prevent water spray and flooding</td>
+                    </tr>
+                    <tr>
+                        <td>Polish shower hardware</td>
+                        <td>Housekeeping</td>
+                        <td>Every clean</td>
+                        <td>Faucets, handles for guest impression</td>
+                    </tr>
+                    <tr>
+                        <td>Set curtains with sheers forward</td>
+                        <td>Housekeeping</td>
+                        <td>Every departure</td>
+                        <td>Visual presentation standard</td>
+                    </tr>
+                    <tr>
+                        <td>Ensure complete room inventory</td>
+                        <td>Housekeeping</td>
+                        <td>Every clean</td>
+                        <td>Ice bucket, hangers, amenities</td>
+                    </tr>
+                    <tr>
+                        <td>Carpet stretching training</td>
+                        <td>Engineering</td>
+                        <td>As needed</td>
+                        <td>Safety hazard prevention</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="action-plan">
+        <h3>📅 Immediate Action Plan</h3>
+        
+        <div class="task-item">
+            <div class="task-number">1. Hallways & Stairwells Cleaning</div>
+            <div><strong>Assigned To:</strong> Danuskia (arrives 2:00 PM today)</div>
+            <div><strong>Tasks:</strong> Full cleaning of hallways and stairwells, dust fire extinguisher tops, remove debris</div>
+            <div class="task-assigned">Supervisor to conduct walk-through upon arrival</div>
+        </div>
+        
+        <div class="task-item">
+            <div class="task-number">2. Maintenance Log Development</div>
+            <div><strong>Assigned To:</strong> Management</div>
+            <div><strong>Tasks:</strong> Create centralized log for room-level and common area repair tracking</div>
+            <div class="task-assigned">Google Sheets or printed weekly format</div>
+        </div>
+        
+        <div class="task-item">
+            <div class="task-number">3. Ecolab Service Call</div>
+            <div><strong>Issue:</strong> Blue soap dispenser malfunction - not dispensing product</div>
+            <div><strong>Action:</strong> Schedule technician visit for repair/replacement</div>
+            <div class="task-assigned">Document resolution in maintenance log</div>
+        </div>
+        
+        <div class="task-item">
+            <div class="task-number">4. Linen Vendor Assessment</div>
+            <div><strong>Assigned To:</strong> Management/Purchasing</div>
+            <div><strong>Task:</strong> Assess current linen vendor situation and compare pricing options</div>
+            <div class="task-assigned">Evaluate cost savings and service quality alternatives</div>
+        </div>
+        
+        <div class="task-item">
+            <div class="task-number">5. Pool Bathroom Security</div>
+            <div><strong>Assigned To:</strong> Engineering</div>
+            <div><strong>Task:</strong> Install lock on restricted bathroom near pool area</div>
+            <div class="task-assigned">Prevent unauthorized access and sanitation issues</div>
+        </div>
+        
+        <div class="task-item">
+            <div class="task-number">6. Carpet Assessment</div>
+            <div><strong>Issue:</strong> Paint splatters on 8th floor carpet (toward 820s)</div>
+            <div><strong>Action:</strong> Assess removal options, coordinate with maintenance for cleaning/replacement</div>
+            <div class="task-assigned">Document incident and prevent future paint spills</div>
+        </div>
+    </div>
+
+    <div style="margin-top: 40px; text-align: center; color: #666; font-size: 12px; border-top: 1px solid #ddd; padding-top: 20px;">
+        <p><strong>Report Generated:</strong> Thursday, June 26, 2025</p>
+        <p><strong>Follow-up Required:</strong> Weekly review of action items and progress tracking</p>
+    </div>
+</body>
+</html>
